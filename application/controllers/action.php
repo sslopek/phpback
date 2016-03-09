@@ -78,6 +78,50 @@ class Action extends CI_Controller{
         
     }
     
+	
+	
+	
+	public function caslogin(){
+		$this->load->library('cas');
+		$this->cas->force_auth();
+		$casuser = $this->cas->user()->userlogin;
+
+		//Check if exists
+		$userid = $this->get->getUserId($casuser);
+		
+        if ($userid == 0) {
+			//Create user automatically
+			$votes = $this->get->getSetting('maxvotes');
+			$this->post->add_user($casuser, $casuser, 'nopassword', $votes, false); //todo: random password for security
+			$this->post->log("CAS User registered: $casuser", "general", 0);
+        }
+		
+		header('Location: ' . base_url() . 'action/caslogin2');
+    }
+	
+	public function caslogin2(){
+        session_start();
+		$this->load->library('cas');
+		$this->cas->force_auth();
+		$casuser = $this->cas->user()->userlogin;
+
+		//Check if exists
+		$userid = $this->get->getUserId($casuser);
+		
+        if ($userid > 0) {
+			//Auto login
+			$user = $this->get->getUser($userid);
+			$this->get->setSessionUserValues($user);
+			$this->get->setSessionCookie();
+        }
+		
+		header('Location: ' . base_url() . 'home/');
+    }
+	
+	
+
+	
+	
     public function login(){
         session_start();
 

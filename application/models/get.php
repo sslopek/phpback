@@ -164,6 +164,21 @@ class Get extends CI_Model
         }
         else return 0;
     }
+	
+	
+	
+	public function getUserId($email) {
+        $sql = $this->db->query("SELECT * FROM users WHERE email=" . $this->db->escape($email));
+        if($sql->num_rows() != 0){
+            $user = $sql->row();
+            return $user->id;
+        }
+        else return 0;
+    }
+	
+	
+	
+	
 
     public function getSetting($name){
         $sql = $this->db->query("SELECT * FROM settings WHERE name=" . $this->db->escape($name));
